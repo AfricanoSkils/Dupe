@@ -159,4 +159,16 @@ for i, opcao in ipairs(opcoes) do
     botao.Size = UDim2.new(0.4, 0, 0.1, 0)
     botao.Position = UDim2.new(0.05 + ((i-1)%2)*0.5, 0, 0.2 + math.floor((i-1)/2)*0.15, 0)
     botao.Text = opcao.nome
-    botao
+    botao.BackgroundColor3 = opcao.cor
+    botao.TextColor3 = Color3.fromRGB(255, 255, 255)
+    botao.Font = Enum.Font.GothamBold
+    botao.TextScaled = true
+    botao.BorderSizePixel = 0
+
+    botao.MouseButton1Click:Connect(function()
+        opcao.func()
+    end)
+end
+
+-- Eventos
+continuar.MouseButton1Click:Connect
