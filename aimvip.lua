@@ -2,7 +2,7 @@
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local Camera = game.Workspace.CurrentCamera
+local Camera = workspace.CurrentCamera
 local RunService = game:GetService("RunService")
 local key = "#AIMESPKEY99"
 
@@ -107,8 +107,8 @@ rodape.TextScaled = true
 local function getClosestPlayer()
     local closest, distance = nil, math.huge
     for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-            local pos = Camera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") then
+            local pos = Camera:WorldToViewportPoint(plr.Character.Head.Position)
             local dist = (Vector2.new(pos.X, pos.Y) - Camera.ViewportSize / 2).Magnitude
             if dist < distance then
                 closest = plr
@@ -131,27 +131,39 @@ end
 local function enableESP()
     for _, plr in pairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local adornee = plr.Character.HumanoidRootPart
             local box = Instance.new("BoxHandleAdornment")
-            box.Adornee = plr.Character.HumanoidRootPart
+            box.Adornee = adornee
             box.Size = Vector3.new(4, 6, 2)
             box.AlwaysOnTop = true
             box.ZIndex = 10
             box.Transparency = 0.5
-            box.Color3 = Color3.fromRGB(0, 255, 0)
-            box.Parent = plr.Character
-        end
-    end
-end
 
-local function enableTeamCheck()
-    -- Exemplo: ignora jogadores com mesmo TeamColor
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer and plr.Team == LocalPlayer.Team then
-            print("Ignorando aliado:", plr.Name)
+            local ray = Ray.new(Camera.CFrame.Position, (adornee.Position - Camera.CFrame.Position).Unit * 500)
+            local hit = workspace:FindPartOnRay(ray, LocalPlayer.Character, false, true)
+
+            if hit and hit:IsDescendantOf(plr.Character) then
+                box.Color3 = Color3.fromRGB(0, 255, 0)
+            else
+                box.Color3 = Color3.fromRGB(255, 0, 0)
+            end
+
+            box.Parent = adornee
         end
     end
 end
 
 -- Botões
 local opcoes = {
-    {nome = "Aimbot", cor = Color3.fromRGB(0, 170, 255),
+    {nome = "Aimbot", cor = Color3.fromRGB(0, 170, 255), func = enableAimbot},
+    {nome = "ESP", cor = Color3.fromRGB(0, 255, 127), func = enableESP}
+}
+
+for i, opcao in ipairs(opcoes) do
+    local botao = Instance.new("TextButton", frame)
+    botao.Size = UDim2.new(0.4, 0, 0.1, 0)
+    botao.Position = UDim2.new(0.05 + ((i-1)%2)*0.5, 0, 0.2 + math.floor((i-1)/2)*0.15, 0)
+    botao.Text = opcao.nome
+    botao.BackgroundColor3 = opcao.cor
+    botao.TextColor3 = Color3.fromRGB(255, 255, 255)
+    botao.Font = Enum.Font.G
