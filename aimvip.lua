@@ -3,7 +3,7 @@
 local player = game.Players.LocalPlayer
 local key = "#AIMESPKEY99"
 
--- GUI de boas-vindas
+-- GUI de Boas-Vindas
 local guiBoas = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 local frameBoas = Instance.new("Frame", guiBoas)
 frameBoas.Size = UDim2.new(0, 420, 0, 220)
